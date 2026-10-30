@@ -1,5 +1,5 @@
 #files and folders
-.outputs/
+outputs/
 .venv/
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
