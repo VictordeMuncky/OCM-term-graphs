@@ -55,3 +55,16 @@ def nearest_codes(code, k, truncated_matrix):
 
     return codes, distances[0][1:]
 
+def dimension_poles(vectors, n=10):
+    """
+    For every SVD dimension, lists the n codes with the highest and the n codes
+    with the lowest value on it. labels is an optional {code: name} dict, e.g. from
+    the codebook graph, so the names are shown next to the codes.
+    Returns a long DataFrame: dimension, pole ('high'/'low'), rank, code, label, value.
+    """
+    rows = []
+    for dim in vectors.columns:
+        for pole, picked in [('high', vectors[dim].nlargest(n)), ('low', vectors[dim].nsmallest(n))]:
+            for rank, (code, value) in enumerate(picked.items(), start=1):
+                rows.append((dim, pole, rank, code, value))
+    return pd.DataFrame(rows, columns=['dimension', 'pole', 'rank', 'code', 'value'])
