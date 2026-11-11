@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from scipy.sparse.linalg import svds
 from sklearn.neighbors import NearestNeighbors
+import umap
+import plotly.express as px
 
 def ppmi_matrix(associations, filter=None):
     if filter is not None:
@@ -68,3 +70,21 @@ def dimension_poles(vectors, n=10):
             for rank, (code, value) in enumerate(picked.items(), start=1):
                 rows.append((dim, pole, rank, code, value))
     return pd.DataFrame(rows, columns=['dimension', 'pole', 'rank', 'code', 'value'])
+
+def umap_reduction(vectors, neighbours = 10, min_distance = 0.2):
+    """
+    reduce truncated SVD components down to 3 dimensional space using umap algorithm.
+    n_neighbours looks at how many neighbours to consider. A higher value implies capturing global patterns
+    min_distance draws output points as being either packed or spread out.
+    return umap as dataframe where columns are the coordinates of 2 dimenisonal space
+    """
+    reducer = umap.UMAP(
+        n_components=3,
+        n_neighbors=neighbours,
+        min_dist=min_distance,
+        metric='cosine'
+    )
+
+    vectors_umap = reducer.fit_transform(vectors)
+
+    return pd.DataFrame(vectors_umap, columns=['UMAP_1', 'UMAP_2', 'UMAP_3'], index = vectors.index)
